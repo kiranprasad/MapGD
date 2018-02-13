@@ -1,0 +1,17 @@
+individual author data > scopus
+journal issue wise data > elsevier journals
+number of downloads and citations per document > springer journals
+yearly ICR, citations et al > SJR
+
+totalCites-selfCites=externalCites
+
+i = citation count
+p = ICR (0<p<1)
+
+p+1= k ~ 2 < [Simon, 1955]
+
+Ty = NLIQ & H-index of editorial board
+
+f(i) = (psi)B(i,p+1); psi random for now
+
+
