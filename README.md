@@ -1,2 +1,2 @@
-# finalyearproject
-Final year project
+# MapGD
+Mapping Growth of a Domain
