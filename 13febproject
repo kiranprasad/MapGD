@@ -10,7 +10,8 @@ p = ICR (0<p<1)
 
 p+1= k ~ 2 < [Simon, 1955]
 
-Ty = NLIQ & H-index of editorial board
+Ty = H-index of journal
+NLIQ dropped since it is author based. H-index corrected.
 
 f(i) = (psi)B(i,p+1); psi random for now
 
