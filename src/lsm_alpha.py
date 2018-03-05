@@ -62,10 +62,3 @@ for filename in directory_listing:
         csvops(outfile,'%s','w')
     except:
         FileNotFoundError
-
-    
-'''
-setting PSI to 1 and evaluating alpha from Romer model using stochastic model of citation.
-Replace the equation in line 44 with the one below once SJR data comes in.
-'''  
-#alpha.append([math.log(scjr) - arts*math.log(beta(cite,icrp+1)) / (math.log(hind)-arts*math.log(beta(cite,icrp+1)))])
