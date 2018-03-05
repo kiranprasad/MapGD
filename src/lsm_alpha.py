@@ -40,9 +40,11 @@ def alpha_compute(data):
         cite = int(data[x][1])
         icrp = float(data[x][2])
         arts = int(data[x][3])
-        #scjr = data[x][4]
-        alpha.append([arts*math.log(beta(cite,icrp+1)) / (math.log(hind)-arts*math.log(beta(cite,icrp+1)))])
-    
+        scjr = float(data[x][4])
+        if cite and icrp and arts and scjr != 0:
+            alpha.append([math.exp((math.log(scjr)-arts*math.log(beta(cite,icrp+1))) / (math.log(hind)-arts*math.log(beta(cite,icrp+1))))])
+        else:
+            alpha.append([0])
     alphaout = np.column_stack((year,alpha))
     return alphaout
 
