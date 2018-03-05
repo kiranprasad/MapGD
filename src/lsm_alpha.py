@@ -1,10 +1,11 @@
 #WIP source
 import csv
-import numpy as np
-import matplotlib.pyplot as plt
-import os
 import math
-from scipy.special import beta
+import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import special
 
 FLATFILE_DIR = './Project-Data/csv-files/'
 '''
@@ -41,10 +42,11 @@ def alpha_compute(data):
         icrp = float(data[x][2])
         arts = int(data[x][3])
         scjr = float(data[x][4])
-        if cite and icrp and arts and scjr != 0:
-            alpha.append([math.exp((math.log(scjr)-arts*math.log(beta(cite,icrp+1))) / (math.log(hind)-arts*math.log(beta(cite,icrp+1))))])
+        if cite != 0:
+            alpha.append([(math.log(scjr)-arts*math.log(special.beta(cite,icrp+1))) / (math.log(hind)-arts*math.log(special.beta(cite,icrp+1)))])
         else:
             alpha.append([0])
+        
     alphaout = np.column_stack((year,alpha))
     return alphaout
 
@@ -58,7 +60,4 @@ for filename in directory_listing:
     data = csvops(filepath,'str','r')
     journalpha = alpha_compute(data)
     outfile = os.path.join(FLATFILE_DIR,"alpha_"+filename)
-    try:
-        csvops(outfile,'%s','w')
-    except:
-        FileNotFoundError
+    csvops(outfile,'%s','w')
