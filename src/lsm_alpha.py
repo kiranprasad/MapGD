@@ -5,7 +5,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import special
+from scipy.special import beta
 
 FLATFILE_DIR = './Project-Data/csv-files/'
 '''
@@ -39,11 +39,11 @@ def alpha_compute(data):
     for x in range(size-1):
         year.append(int(data[x][0]))
         cite = int(data[x][1])
-        icrp = float(data[x][2])
+        icrp = float(data[x][2])/100
         arts = int(data[x][3])
         scjr = float(data[x][4])
         if cite != 0:
-            alpha.append([(math.log(scjr)-arts*math.log(special.beta(cite,icrp+1))) / (math.log(hind)-arts*math.log(special.beta(cite,icrp+1)))])
+            alpha.append([(math.log(scjr)-arts*math.log(0.1*beta(icrp+1,hind))) / (math.log(cite)-arts*math.log(0.1*beta(icrp+1,hind)))/2])
         else:
             alpha.append([0])
         
