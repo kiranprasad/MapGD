@@ -16,7 +16,7 @@ def beta_1(a,b):
 
 
 solution = beta_1(a,b);
-print "beta_value = ",solution
+print ("beta_value = ",solution)
 
 
 #from scipy.integrate import quad
@@ -25,7 +25,7 @@ def integrand(solution):
     return solution
 
 ans, err = quad(integrand, 0, 20)
-print "integration value = ",ans
+print ("integration value ={0}, error value={1}",ans, err)
 
 
 

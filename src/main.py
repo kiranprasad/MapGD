@@ -15,15 +15,13 @@ SJR_DIR = './Project-Data/SJR'
 '''
 General plotting
 '''
-def plot_things (xaxis1,yaxis1,yaxis2, filename):
+def plot_things (xaxis1,yaxis1):
     
     plt.plot(xaxis1, yaxis1, '--o')
-    plt.plot(xaxis1, yaxis2, '--or')
     plt.xticks(np.arange(min(xaxis1), max(xaxis1)+1, 1.0))
-    plt.yticks(np.arange(min(yaxis1),0.1+max(yaxis1), 0.5))
+    plt.yticks(np.arange(min(yaxis1),0.1+1, 0.1))
     plt.xlabel("Year")
     plt.ylabel("Predicted SJR")
-    #plt.title(filename)
     plt.show()
 
 def csvops (csvdata, ftype, rw):
@@ -35,7 +33,7 @@ def csvops (csvdata, ftype, rw):
         return csvarray
     elif(rw=='w'):
         with open(csvdata, 'w', newline='') as csvfile:
-            np.savetxt(csvfile, journaldata, fmt=ftype, delimiter=',') 
+            np.savetxt(csvfile, journalpha, fmt=ftype, delimiter=',') 
 
 
 def alpha_compute(data):
@@ -65,7 +63,7 @@ def betaout(a,b):
 def integrand(solution):
     return solution
 
-def sjrcompute(data,alpha,jname):
+def sjrcompute(data,alpha):
     sjr = []
     sjroriginal = []
     year = []
@@ -88,30 +86,18 @@ def sjrcompute(data,alpha,jname):
             sjr.append([0])
         #Normalizing SJR values predicted and observed
     sjrnp = np.array(sjr) 
-    sjrog = np.array(sjroriginal)
-    # sjrmin = np.amin(sjrnp,0)
-    # sjrmax = np.amax(sjrnp,0)
-    # pred_sjr_normal = sjrnp-sjrmin
-    # pred_sjr_normal = pred_sjr_normal/(sjrmax-sjrmin)
-    # sjrnp = np.array(sjroriginal) 
-    # sjrmin = np.amin(sjrnp,0)
-    # sjrmax = np.amax(sjrnp,0)
-    # orig_sjr_normal = sjrnp-sjrmin
-    # orig_sjr_normal = orig_sjr_normal/(sjrmax-sjrmin)   
+    sjrmin = np.amin(sjrnp,0)
+    sjrmax = np.amax(sjrnp,0)
+    pred_sjr_normal = sjrnp-sjrmin
+    pred_sjr_normal = pred_sjr_normal/(sjrmax-sjrmin)
+    sjrnp = np.array(sjroriginal) 
+    sjrmin = np.amin(sjrnp,0)
+    sjrmax = np.amax(sjrnp,0)
+    orig_sjr_normal = sjrnp-sjrmin
+    orig_sjr_normal = orig_sjr_normal/(sjrmax-sjrmin)   
     sjrout = np.column_stack((year,sjr))
-    plot_things(year, sjrnp,sjrog, jname)
+    #plot_things(year, pred_sjr_normal)
     return sjrout
-
-
-# alphapath = os.path.join(ALPHA_DIR,"ICARUS.csv")
-# alphadata = csvops(alphapath,'float','r')
-# alphaval = np.median(alphadata,0)
-# print("alpha",alphaval)
-# filepath = os.path.join(FLATFILE_DIR,"ICARUS.csv")
-# data = csvops(filepath,'str','r')
-# journalpha = sjrcompute(data,alphaval[1],"Icarus")
-# outfile = os.path.join(SJR_DIR,"ICARUS.csv")
-# csvops(outfile, '%s','w')
 
 
 '''
@@ -123,25 +109,32 @@ directory_listing = os.listdir(FLATFILE_DIR)
 for filename in directory_listing:
     filepath = os.path.join(FLATFILE_DIR, filename)
     data = csvops(filepath,'str','r')
-    journaldata = alpha_compute(data)
+    journalpha = alpha_compute(data)
     outfile = os.path.join(ALPHA_DIR,filename)
     csvops(outfile,'%s','w')
 
 # #SJR compute
 
 for filename in directory_listing:
-    print(filename)
-    # if filename != "Astrophysical_Journal_Letters.csv" and filename != "Astrophysical_Journal.csv":
-    print("check")
     filepath = os.path.join(FLATFILE_DIR, filename)
     data = csvops(filepath,'str','r')
     alphapath = os.path.join(ALPHA_DIR,filename)
     alphadata = csvops(alphapath,'float','r')
     alphaval = np.median(alphadata,0)
-    print(alphaval)
-    journaldata = sjrcompute(data,alphaval[1],filename)
+    journalsjr = sjrcompute(data,alphaval[1])
     outfile = os.path.join(SJR_DIR,filename)
     csvops(outfile,'%s','w')
+
+
+# alphapath = os.path.join(ALPHA_DIR,filename)
+# alphadata = csvops(alphapath,'float','r')
+# alphaval = np.median(alphadata,0)
+# print("alpha",alphaval)
+# filepath = os.path.join(FLATFILE_DIR,"ICARUS.csv")
+# data = csvops(filepath,'str','r')
+# journalpha = sjrcompute(data,alphaval[1])
+# outfile = os.path.join(FLATFILE_DIR,"sjr_ICARUS.csv")
+# csvops(outfile, '%s','w')
 
 '''
 TBD: Compute median alpha values within each journal SJR call
