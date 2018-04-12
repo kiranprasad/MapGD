@@ -24,6 +24,7 @@ def plot_things (xaxis1,yaxis1,yaxis2, filename):
     plt.xlabel("Year")
     plt.ylabel("Predicted SJR")
     #plt.title(filename)
+    plt.grid(True)
     plt.show()
 
 def csvops (csvdata, ftype, rw):
@@ -71,22 +72,26 @@ def sjrcompute(data,alpha,jname):
     year = []
     size = np.ma.size(data,0)
     hind = int(data[size-1][0])
-    
+    square_err = 0
     for x in range(size-1):
-        year.append(int(data[x][0]))
-        cite = int(data[x][1])
-        icrp = float(data[x][2])/100
-        arts = int(data[x][3])
-        sjroriginal.append([float(data[x][4])])
-        if cite != 0:
-            # solution = betaout(cite,icrp+1)
-            # #beta = (math.gamma(cite)*math.gamma(icrp+1)/math.gamma(icrp+1+cite))^(alpha)
-            # intg, err = quad(integrand,0,arts)
-            outp = alpha*math.log(hind)+math.log(arts)+(1-alpha)*math.log(beta(cite,icrp+1))
-            sjr.append([math.exp(outp)])
-        else:
-            sjr.append([0])
-        #Normalizing SJR values predicted and observed
+        if x >= 5:
+            year.append(int(data[x][0]))
+            cite = int(data[x][1])
+            icrp = float(data[x][2])/100
+            arts = int(data[x][3])
+            sjroriginal.append([float(data[x][4])])
+            if cite != 0:
+                # solution = betaout(cite,icrp+1)
+                # #beta = (math.gamma(cite)*math.gamma(icrp+1)/math.gamma(icrp+1+cite))^(alpha)
+                # intg, err = quad(integrand,0,arts)
+                outp = alpha*math.log(hind)+math.log(arts)+(1-alpha)*math.log(beta(cite,icrp+1))
+                sjr.append([math.exp(outp)])
+            else:
+                sjr.append([0])
+            #Normalizing SJR values predicted and observed
+            square_err += pow((float(data[x][4])-math.exp(outp)), 2)
+    rmse = math.sqrt(square_err/size) 
+    print ("RMSE", rmse)
     sjrnp = np.array(sjr) 
     sjrog = np.array(sjroriginal)
     # sjrmin = np.amin(sjrnp,0)
@@ -131,17 +136,17 @@ for filename in directory_listing:
 
 for filename in directory_listing:
     print(filename)
-    # if filename != "Astrophysical_Journal_Letters.csv" and filename != "Astrophysical_Journal.csv":
-    print("check")
-    filepath = os.path.join(FLATFILE_DIR, filename)
-    data = csvops(filepath,'str','r')
-    alphapath = os.path.join(ALPHA_DIR,filename)
-    alphadata = csvops(alphapath,'float','r')
-    alphaval = np.median(alphadata,0)
-    print(alphaval)
-    journaldata = sjrcompute(data,alphaval[1],filename)
-    outfile = os.path.join(SJR_DIR,filename)
-    csvops(outfile,'%s','w')
+    if filename != "Astrophysical_Journal_Letters.csv" and filename != "ASCOM.csv":
+        print("check")
+        filepath = os.path.join(FLATFILE_DIR, filename)
+        data = csvops(filepath,'str','r')
+        alphapath = os.path.join(ALPHA_DIR,filename)
+        alphadata = csvops(alphapath,'float','r')
+        alphaval = np.median(alphadata,0)
+        print(alphaval)
+        journaldata = sjrcompute(data,alphaval[1],filename)
+        outfile = os.path.join(SJR_DIR,filename)
+        csvops(outfile,'%s','w')
 
 '''
 TBD: Compute median alpha values within each journal SJR call
